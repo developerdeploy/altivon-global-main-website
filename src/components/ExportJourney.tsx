@@ -4,7 +4,6 @@ import { Icon } from "./PageElements";
 import { useSiteMotion } from "./MotionSystem";
 import { journeyStages } from "@/data/exportJourney";
 import { exportFrames } from "@/data/exportFrames";
-import "./export-journey.css";
 
 export default function ExportJourney() {
   const root = useRef<HTMLElement>(null);

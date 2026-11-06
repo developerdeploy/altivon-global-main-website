@@ -10,6 +10,7 @@ import "./motion-design.css";
 import "./altivon-palette.css";
 import "./themes.css";
 import "./scene-backgrounds.css";
+import "./components/export-journey.css";
 import "./catalogue.css";
 
 const rootElement = document.getElementById("root")!;

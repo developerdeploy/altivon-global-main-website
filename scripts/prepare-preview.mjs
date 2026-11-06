@@ -9,7 +9,9 @@ const origin = (env.VITE_SITE_URL || "https://altivonglobal.com").replace(/\/$/,
 const base = (process.env.SITE_BASE_PATH || "/").replace(/\/$/, "");
 const template = readFileSync("dist/index.html", "utf8")
   .replace(/<title>[\s\S]*?<\/title>/g, "")
-  .replace(/<meta\b[^>]*(?:name="(?:robots|description|twitter:[^"]+)"|property="og:[^"]+")[^>]*>/g, "");
+  .replace(/<meta\b[^>]*(?:name="(?:robots|description|twitter:[^"]+)"|property="og:[^"]+")[^>]*>/g, "")
+  // Keep the first paint independent of stylesheet round trips on mobile connections.
+  .replace(/<link\b[^>]*rel="stylesheet"[^>]*href="([^"]+)"[^>]*>/g, (_, href) => `<style data-critical>${readFileSync(resolve("dist", href.slice(base.length).replace(/^\//, "")), "utf8")}</style>`);
 const assets = readdirSync("dist/assets");
 const server = await createServer({ mode: "production", ssr: { noExternal: ["react-helmet-async"] }, server: { middlewareMode: true, watch: null }, appType: "custom", optimizeDeps: { noDiscovery: true, include: [] } });
 try {
