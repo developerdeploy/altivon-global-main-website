@@ -2,7 +2,8 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { lazy } from "react";
 const HomePage = lazy(() => import("@/pages/HomePage"));
-const MoringaProductPage = lazy(() => import("@/pages/MoringaProductPage"));
+const ProductsPage = lazy(() => import("@/pages/ProductsPage"));
+const ProductDetailPage = lazy(() => import("@/pages/ProductDetailPage"));
 const QualityDocumentationPage = lazy(
   () => import("@/pages/QualityDocumentationPage"),
 );
@@ -20,10 +21,10 @@ export default function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route path="/" element={<HomePage />} />
-        <Route
-          path="/products/moringa-leaf-powder"
-          element={<MoringaProductPage />}
-        />
+        <Route path="/products" element={<ProductsPage />} />
+        <Route path="/products/moringa-leaf-powder" element={<ProductDetailPage slug="moringa-leaf-powder" />} />
+        <Route path="/products/beetroot-powder" element={<ProductDetailPage slug="beetroot-powder" />} />
+        <Route path="/products/ashwagandha-powder" element={<ProductDetailPage slug="ashwagandha-powder" />} />
         {/* Canonical 301/SPA Aliases & Legacy Route Redirects */}
         <Route
           path="/moringa-oleifera"

@@ -3,7 +3,7 @@ import { SITE_IMAGES } from "@/config/images";
 import { Disclosure, Icon, PageIntro, QuoteCTA } from "@/components/PageElements";
 
 const planning = [
-  { name: "Intended use", title: "Start with the application.", description: "Food, beverage, supplement and other uses can follow different rules. Identify the product and proposed use before discussing a destination or freight plan.", note: "Conventional Moringa oleifera leaf powder" },
+  { name: "Intended use", title: "Start with the application.", description: "Food, beverage, supplement and other uses can follow different rules. Identify the product and proposed use before discussing a destination or freight plan.", note: "Moringa, beetroot and ashwagandha powders" },
   { name: "Destination", title: "Check the market before the route.", description: "Your importer or adviser should confirm product eligibility, registrations, labelling and import requirements with the destination authority. A country selection is an enquiry, not confirmation of market access.", note: "Country, destination port and importer responsibilities" },
   { name: "Documents", title: "Agree the evidence and paperwork.", description: "Product specifications and lot reports support technical review. Invoices, packing lists and transport documents support the shipment. Additional certificates depend on the transaction.", note: "Required tests, document scope and availability" },
   { name: "Freight", title: "Define the handover together.", description: "Quantity, packing, delivery point, freight booking and insurance help determine the transport arrangement and trade term. Origin, loading port, costs and timing are confirmed for the proposed order.", note: "Named place or port and agreed Incoterms edition" },
@@ -14,7 +14,7 @@ export default function GlobalMarketsPage() {
   const item = planning[selected];
   return (
     <div className="section-container page-space">
-      <PageIntro eyebrow="Export planning" seoTitle="Moringa Powder Export Planning and Trade Terms" title="Plan the product. Then plan the journey." description="Plan a moringa leaf powder enquiry around intended use, destination rules, shipment documents, freight and agreed trade terms." path="/global-markets" />
+      <PageIntro eyebrow="Export planning" seoTitle="Botanical Powder Export Planning and Trade Terms" title="Plan the product. Then plan the journey." description="Plan a botanical powder enquiry around intended use, destination rules, shipment documents, freight and agreed trade terms." path="/global-markets" />
       <section className="split-feature markets-feature">
         <div className="feature-image"><img src={SITE_IMAGES.moringaPlantation} alt="Illustrative moringa cultivation in India" /></div>
         <div className="market-content">

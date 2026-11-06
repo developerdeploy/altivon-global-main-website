@@ -9,6 +9,9 @@ import { resolve } from "node:path";
 
 // Preserve direct links on static hosting without needing a Node backend.
 const routes = [
+  "products",
+  "products/beetroot-powder",
+  "products/ashwagandha-powder",
   "products/moringa-leaf-powder",
   "quality-documentation",
   "bulk-supply",
@@ -26,6 +29,8 @@ const baseHtml = readFileSync(resolve("dist/index.html"), "utf8");
 const assets = readdirSync(resolve("dist/assets"));
 const base = (process.env.SITE_BASE_PATH || "/").replace(/\/$/, "");
 const productRoutes = new Set([
+  "products/beetroot-powder",
+  "products/ashwagandha-powder",
   "products/moringa-leaf-powder",
   "moringa-oleifera",
   "products/moringa-oleifera",
@@ -33,6 +38,7 @@ const productRoutes = new Set([
 ]);
 const routeModules = {
   "": "HomePage",
+  products: "ProductsPage",
   "quality-documentation": "QualityDocumentationPage",
   "bulk-supply": "BulkSupplyPage",
   "global-markets": "GlobalMarketsPage",
@@ -44,7 +50,7 @@ const routeModules = {
 };
 function pageHtml(route) {
   const moduleName = productRoutes.has(route)
-    ? "MoringaProductPage"
+    ? "ProductDetailPage"
     : routeModules[route];
   const names = [
     moduleName,
@@ -59,10 +65,10 @@ function pageHtml(route) {
     )
     .filter(Boolean)
     .map((file) => `<link rel="modulepreload" href="${base}/assets/${file}">`);
-  if (productRoutes.has(route))
-    links.push(
-      `<link rel="preload" as="image" href="${base}/images/moringa-studio-powder-960.webp" imagesrcset="${base}/images/moringa-studio-powder-320.webp 320w, ${base}/images/moringa-studio-powder-512.webp 512w, ${base}/images/moringa-studio-powder-960.webp 960w, ${base}/images/moringa-studio-powder-1440.webp 1440w" imagesizes="(max-width: 767px) 92vw, 50vw" fetchpriority="high">`,
-    );
+  if (productRoutes.has(route)) {
+    const product = route.includes("beetroot") ? "beetroot" : route.includes("ashwagandha") ? "ashwagandha" : "moringa";
+    links.push(`<link rel="preload" as="image" href="${base}/images/catalogue-${product}-powder.webp" fetchpriority="high">`);
+  }
   return baseHtml.replace("</head>", `${links.join("\n")}\n</head>`);
 }
 for (const route of routes) {

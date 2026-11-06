@@ -5,6 +5,7 @@ const fields = {
   target_timing: 100, order_frequency: 100, additional_notes: 3500,
 };
 const scopes = new Set(['quotation', 'sample', 'docs', 'contact_message']);
+const products = new Set(['moringa_leaf_powder', 'beetroot_powder', 'ashwagandha_powder']);
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const json = (body, status = 200) => Response.json(body, {
   status, headers: {'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff'},
@@ -37,7 +38,9 @@ export function validateEnquiry(input) {
     result.order_quantity = quantity;
   }
   result.quantity_unit = 'kg';
-  result.botanical_product = input.enquiry_scope === 'contact_message' ? 'general_inquiry' : 'moringa_leaf_powder';
+  const product = input.botanical_product ?? 'moringa_leaf_powder';
+  if (input.enquiry_scope !== 'contact_message' && !products.has(product)) throw new Error('Choose a valid product.');
+  result.botanical_product = input.enquiry_scope === 'contact_message' ? 'general_inquiry' : product;
   return result;
 }
 

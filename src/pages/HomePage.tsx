@@ -2,26 +2,26 @@ import { Link } from "react-router-dom";
 import { SITE_IMAGES, SITE_BACKDROPS } from "@/config/images";
 import SEO from "@/components/SEO";
 import { Disclosure, Icon, QuoteCTA } from "@/components/PageElements";
-import { DepthCard } from "@/components/MotionSystem";
+import ProductCollection from "@/components/ProductCollection";
 import QuickEnquiry from "@/components/QuickEnquiry";
 import ProductImage from "@/components/ProductImage";
 import ExportJourney from "@/components/ExportJourney";
-import { journeyStages } from "@/data/exportJourney";
 import SceneBackdrop from "@/components/SceneBackdrop";
 
 export default function HomePage() {
   return (
     <div className="cinematic-home">
       <SEO
-        title="AltivonGlobal | Moringa Leaf Powder from India"
-        description="B2B sourcing and export coordination for conventional moringa leaf powder from India. Ask about samples, packing and a quotation."
+        title="AltivonGlobal | Moringa, Beetroot & Ashwagandha Powders"
+        description="Source moringa, beetroot and ashwagandha powders from India. Explore our product range and discuss bulk packing, samples and export requirements."
         canonical="/"
       />
       <ExportJourney />
-      <section id="journey-details" className="section-container homepage-information journey-deep-details image-surface">
-        <SceneBackdrop {...SITE_BACKDROPS.milling} />
-        <div className="home-info-header"><div><p className="eyebrow">BEHIND THE JOURNEY</p><h2>The details<br />that matter.</h2></div><p>The film illustrates the process; it does not document specific facilities or shipments. Explore the specification, packing and export questions for your order.</p></div>
-        {journeyStages.map(stage => <Disclosure key={stage.name} title={stage.title}><p>{stage.detail}</p><Link className="text-link" to={stage.link}>{stage.cta}<Icon>arrow_forward</Icon></Link></Disclosure>)}
+      <section id="products" className="section-container homepage-products image-surface" data-reveal>
+        <SceneBackdrop {...SITE_BACKDROPS.leaf} />
+        <div className="home-info-header"><div><p className="eyebrow">WHAT WE SUPPLY</p><h2>Three powders.<br />A world of possibilities.</h2></div><p>Moringa, beetroot and ashwagandha. Explore Indian-origin ingredients for your business, with the full specification and catalogue on each product page.</p></div>
+        <ProductCollection />
+        <Link className="text-link" to="/products">Explore all products →</Link>
       </section>
       <div id="quotation-brief" className="section-container enquiry-bridge journey-quote image-surface">
         <SceneBackdrop {...SITE_BACKDROPS.shipping} />
@@ -35,64 +35,6 @@ export default function HomePage() {
           <p className="quiet-note">Requirements differ by country and intended use. <Link to="/global-markets">Review destination planning</Link> before ordering. Quantity choices are estimates, not minimum order commitments.</p>
         </div>
       </div>
-      <section
-        id="ingredient"
-        className="section-container section-space ingredient-story image-surface"
-      >
-        <SceneBackdrop {...SITE_BACKDROPS.powder} />
-        <div className="ingredient-story-copy" data-reveal>
-          <p className="eyebrow">01 / THE INGREDIENT</p>
-          <h2>
-            One leaf.
-            <br />
-            <em>A world of applications.</em>
-          </h2>
-          <p>
-            Conventional moringa leaf powder sourced from India for business
-            buyers. Start with the application and specification you need.
-          </p>
-          <p>
-            Our current offer is conventional moringa leaf powder. Tell us the
-            specification and application you are working with so we can check
-            the proposed supply against your requirements.
-          </p>
-          <div className="application-chips">
-            <span>Food & beverage</span>
-            <span>Nutritional blends</span>
-            <span>Wholesale supply</span>
-          </div>
-          <Link className="text-link" to="/products/moringa-leaf-powder">
-            Explore product specifications <Icon>arrow_forward</Icon>
-          </Link>
-          <p className="quiet-note">
-            Food, beverage and supplement applications need a destination and
-            intended-use review. The current offer is not certified organic.
-          </p>
-        </div>
-        <DepthCard className="ingredient-depth">
-          <div className="ingredient-photo">
-            <ProductImage
-              src={SITE_IMAGES.moringaPowder}
-              alt="Soft green moringa leaf powder in a shallow ivory dish on warm limestone"
-              loading="lazy"
-            />
-          </div>
-          <div className="floating-spec spec-top">
-            <span>BOTANICAL IDENTITY</span>
-            <b>Moringa leaf powder</b>
-            <small>Leaf · Powder · India</small>
-          </div>
-          <div className="floating-spec spec-bottom">
-            <div>
-              <b>Built for bulk.</b>
-              <small>Packing agreed per order</small>
-            </div>
-          </div>
-          <span className="ingredient-index" aria-hidden="true">
-            01
-          </span>
-        </DepthCard>
-      </section>
       <section className="section-container homepage-information image-surface">
         <SceneBackdrop {...SITE_BACKDROPS.leaf} />
         <div className="home-info-header">
@@ -168,7 +110,7 @@ export default function HomePage() {
               {
                 title: "Know the product.",
                 copy: "Agree product identity, physical parameters and the specification needed for your intended use.",
-                link: "/products/moringa-leaf-powder",
+                link: "/products",
                 cta: "See product details",
               },
               {
@@ -335,13 +277,9 @@ export default function HomePage() {
           </Link>
         </div>
         <div>
-          <Disclosure title="What moringa product do you currently offer?">
-            <p>
-              Our current offer is conventional moringa leaf powder from India
-              for business buyers. It is not sold as certified organic. Grade
-              and physical parameters are confirmed against the proposed product
-              specification.
-            </p>
+          <Disclosure title="Which products do you supply?">
+            <p>Our current collection includes moringa leaf powder, beetroot powder and ashwagandha powder. Explore the product pages for applications, specifications, packing details and downloadable catalogues.</p>
+            <Link className="text-link" to="/products">View the collection →</Link>
           </Disclosure>
           <Disclosure title="What quantity should I enquire for?">
             <p>

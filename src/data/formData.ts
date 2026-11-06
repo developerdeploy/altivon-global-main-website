@@ -65,8 +65,3 @@ export const enquiryTypes = [
   { value: "docs", label: "Technical Docs", icon: "verified" },
   { value: "general", label: "General Enquiry", icon: "mail" },
 ];
-
-export const products = [
-  { value: "moringa-leaf-powder", label: "Moringa Leaf Powder" },
-  { value: "banana-powder", label: "Green Banana Powder" },
-];

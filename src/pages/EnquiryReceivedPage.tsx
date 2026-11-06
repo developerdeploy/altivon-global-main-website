@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Icon, PageIntro } from "@/components/PageElements";
+import { products } from "@/data/products";
 export default function EnquiryReceivedPage() {
   const { state } = useLocation();
   const [copied, setCopied] = useState(false);
@@ -22,6 +23,7 @@ export default function EnquiryReceivedPage() {
           <span className="small-label">Your reference</span>
           <h2>{docket}</h2>
           <dl className="spec-list">
+            {state.botanical_product && <div><dt>Product</dt><dd>{products.find(product => product.id === state.botanical_product)?.name || "General enquiry"}</dd></div>}
             <div>
               <dt>Name</dt>
               <dd>{state.contact_name}</dd>

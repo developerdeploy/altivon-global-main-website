@@ -2,8 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { countries } from "@/data/formData";
 import { COMPANY } from "@/config/publicCompany";
-import { SITE_IMAGES } from "@/config/images";
-import { imageVariant } from "@/components/ProductImage";
+import { products } from "@/data/products";
 import { createEnquirySubmission } from "@/lib/sendEnquiry";
 import {
   Icon,
@@ -23,6 +22,7 @@ export default function RequestQuotePage() {
   const [consent, setConsent] = useState(false);
   const [sendEnquiry] = useState(createEnquirySubmission);
   const [draft, setDraft] = useState({
+    product: products.find(item => item.id === params.get("product"))?.id || products[0].id,
     name: "",
     company: "",
     email: "",
@@ -40,6 +40,7 @@ export default function RequestQuotePage() {
     orderFrequency: "",
     website: "",
   });
+  const product = products.find(item => item.id === draft.product) || products[0];
   const titleRef = useRef<HTMLHeadingElement>(null);
   const navigate = useNavigate();
   useEffect(() => {
@@ -75,7 +76,7 @@ export default function RequestQuotePage() {
       country: draft.country,
       destination_market: draft.country,
       destination_port: draft.port.trim(),
-      botanical_product: "moringa_leaf_powder",
+      botanical_product: product.id,
       order_quantity: draft.quantity ? Number(draft.quantity) : null,
       quantity_unit: "kg",
       enquiry_scope: type,
@@ -109,7 +110,7 @@ export default function RequestQuotePage() {
   return (
     <div className="section-container page-space enquiry-page">
       <PageIntro
-        seoTitle="Request a Moringa Leaf Powder Quotation"
+        seoTitle="Request a Botanical Powder Quotation"
         eyebrow="Your next sourcing conversation"
         title="A better brief. A better beginning."
         description="Prepare a brief with intended use, destination, approximate quantity and packing preference. Review it before the next sourcing conversation."
@@ -164,14 +165,16 @@ export default function RequestQuotePage() {
               </div>
               <div className="selected-product">
                 <img
-                  src={imageVariant(SITE_IMAGES.moringaPowder, 96)}
-                  alt="Moringa powder in an ivory dish"
+                  src={product.image}
+                  alt={product.imageAlt}
                 />
-                <div>
+                <label>
                   <span className="small-label">Your ingredient</span>
-                  <h3>Moringa leaf powder</h3>
+                  <select name="product" value={draft.product} onChange={change} required>
+                    {products.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
+                  </select>
                   <small>Indian origin · Bulk supply</small>
-                </div>
+                </label>
               </div>
               <div className="form-grid">
                 <label>
@@ -215,6 +218,8 @@ export default function RequestQuotePage() {
                   >
                     <option>To be discussed</option>
                     <option>Bulk packing</option>
+                    <option>25 kg bulk packs</option>
+                    <option>50 kg bulk packs</option>
                     <option>Custom packaging</option>
                     <option>Private label</option>
                   </select>
@@ -238,13 +243,13 @@ export default function RequestQuotePage() {
                   </select>
                 </label>
               </div>
-              {(["Australia", "New Zealand"].includes(draft.country)) && <p className="destination-note">Food-use status needs particular attention for this destination. <Link to="/global-markets">Read the current FSANZ guidance</Link> before planning an order.</p>}
+              {product.id === "moringa_leaf_powder" && (["Australia", "New Zealand"].includes(draft.country)) && <p className="destination-note">Moringa food-use status needs particular attention for this destination. <Link to="/global-markets">Read the current FSANZ guidance</Link> before planning an order.</p>}
               <details className="enquiry-optional">
                 <summary>Add timing, tests and shipment preferences <span aria-hidden="true">+</span></summary>
                 <div className="form-grid">
                   <label>Target timing (optional)<select name="targetTiming" value={draft.targetTiming} onChange={change}><option value="">To be discussed</option><option>This month</option><option>One to three months</option><option>Later</option><option>Just exploring</option></select></label>
                   <label>Order pattern (optional)<select name="orderFrequency" value={draft.orderFrequency} onChange={change}><option value="">To be discussed</option><option>One-off order</option><option>Recurring requirement</option><option>Evaluation first</option></select></label>
-                  <label className="full-field">Preferred trade term (optional)<select name="terms" value={draft.terms} onChange={change}><option>To be discussed</option><option>FCA — named place to be agreed</option><option>CPT — named destination to be agreed</option><option>CIP — named destination to be agreed</option><option>FOB — named port to be agreed</option><option>CIF — named port to be agreed</option></select></label>
+                  <label className="full-field">Preferred trade term (optional)<select name="terms" value={draft.terms} onChange={change}><option>To be discussed</option><option>EXW — named place to be agreed</option><option>FCA — named place to be agreed</option><option>CPT — named destination to be agreed</option><option>CIP — named destination to be agreed</option><option>FOB — named port to be agreed</option><option>CIF — named port to be agreed</option></select></label>
                   <label className="full-field">Specification, tests or documents wanted (optional)<textarea name="notes" rows={4} maxLength={3000} value={draft.notes} onChange={change} placeholder="For example: target specification, batch COA, microbiological tests, pesticide residues, heavy metals, packing or label requirements" /></label>
                 </div>
               </details>
@@ -329,7 +334,7 @@ export default function RequestQuotePage() {
                         ? "Product documents"
                         : "Bulk quotation",
                   ],
-                  ["Ingredient", "Moringa leaf powder"],
+                  ["Ingredient", product.name],
                   ["Intended use", draft.application],
                   ["Destination", draft.country],
                   [

@@ -49,6 +49,8 @@ export default function SEO({
     ],
     knowsAbout: [
       "Moringa Leaf Powder",
+      "Beetroot Powder",
+      "Ashwagandha Powder",
       "Botanical Ingredient Export",
       "Agricultural Commodities",
       "B2B Commercial Sourcing",

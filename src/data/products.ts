@@ -1,0 +1,59 @@
+const asset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
+
+export const products = [
+  {
+    id: "moringa_leaf_powder",
+    slug: "moringa-leaf-powder",
+    name: "Moringa leaf powder",
+    shortName: "Moringa",
+    subtitle: "A green ingredient for your next formulation.",
+    summary: "Leaf powder for food, beverage and dry ingredient blends.",
+    description: "Moringa leaf powder is produced from leaves that are harvested, cleaned, dried and milled. Final characteristics depend on the processing method and your approved specification.",
+    material: "Moringa leaves",
+    mesh: "60 or 80 mesh — confirm the selected grade",
+    applications: ["Food and beverage formulations", "Dry mixes", "Ingredient blending"],
+    image: asset("images/catalogue-moringa-powder.webp"),
+    originImage: asset("images/catalogue-moringa-origin.webp"),
+    imageAlt: "Green moringa powder in a bowl, surrounded by moringa leaves",
+    originAlt: "Moringa leaves being harvested",
+    catalogue: asset("catalogues/altivonglobal-moringa-powder.pdf"),
+  },
+  {
+    id: "beetroot_powder",
+    slug: "beetroot-powder",
+    name: "Beetroot powder",
+    shortName: "Beetroot",
+    subtitle: "A vivid ingredient. A clear buying brief.",
+    summary: "Dried beetroot powder for beverage, bakery and culinary blends.",
+    description: "Beetroot is cleaned and processed into a dried powder. Colour, flavour, solubility and other characteristics vary with the raw material and processing method; agree these against the offered grade.",
+    material: "Beetroot",
+    mesh: "Available grade to be confirmed with the supplier and buyer",
+    applications: ["Food mixes", "Beverage blends", "Bakery and culinary formulations"],
+    image: asset("images/catalogue-beetroot-powder.webp"),
+    originImage: asset("images/catalogue-beetroot-origin.webp"),
+    imageAlt: "Deep red beetroot powder in a ceramic bowl with fresh beetroot",
+    originAlt: "Beetroot growing in soil",
+    catalogue: asset("catalogues/altivonglobal-beetroot-powder.pdf"),
+  },
+  {
+    id: "ashwagandha_powder",
+    slug: "ashwagandha-powder",
+    name: "Ashwagandha powder",
+    shortName: "Ashwagandha",
+    subtitle: "A botanical ingredient, defined around your needs.",
+    summary: "Milled botanical powder for herbal and buyer-defined ingredient blends.",
+    description: "Ashwagandha powder is made from selected plant material, commonly the root, which is cleaned, dried and milled. Confirm the exact plant part and processing specification for the offered grade before ordering.",
+    material: "Selected plant material — confirm the plant part for the offered grade",
+    mesh: "Available grade to be confirmed with the supplier and buyer",
+    applications: ["Herbal ingredient blends", "Traditional botanical preparations", "Other buyer-defined uses"],
+    image: asset("images/catalogue-ashwagandha-powder.webp"),
+    originImage: asset("images/catalogue-ashwagandha-origin.webp"),
+    imageAlt: "Ashwagandha powder in a wooden bowl beside a wooden spoon",
+    originAlt: "Harvested ashwagandha roots in a field",
+    catalogue: asset("catalogues/altivonglobal-ashwagandha-powder.pdf"),
+  },
+];
+
+export type Product = (typeof products)[number];
+export const productEnquiry = (product: Product, type = "quotation") =>
+  `/request-quote?product=${product.id}&type=${type}`;

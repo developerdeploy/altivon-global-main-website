@@ -9,7 +9,10 @@ Google Apps Script writes to the private spreadsheet tab `Enquiries`. Its column
 headers must match `ENQUIRY_HEADERS` in `google-apps-script/Code.gs`.
 Request IDs prevent repeat submissions from adding duplicate rows. Values that
 could be interpreted as formulas are stored as literal text. The Sheet records
-the new-enquiry status and whether the team email alert was sent.
+the new-enquiry status, selected product and whether the team email alert was sent.
+The product is validated against the three catalogue products and included in the
+alert subject and body. Existing 22-column Sheets gain a Product column at the
+end; existing rows and status columns are preserved.
 
 The Google account owning the spreadsheet executes the script. Alerts go to
 `inquiry@altivonglobal.com`; no login to that receiving mailbox is needed. The

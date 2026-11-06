@@ -29,6 +29,8 @@ const filmBackdrop = (frame: string) => ({
   mobileSrc: `${import.meta.env.BASE_URL}frames/export-journey/mobile/${frame}.webp`,
 });
 export const SITE_BACKDROPS = {
+  beetroot: { src: image("catalogue-beetroot-powder.webp"), mobileSrc: image("catalogue-beetroot-powder.webp") },
+  ashwagandha: { src: image("catalogue-ashwagandha-powder.webp"), mobileSrc: image("catalogue-ashwagandha-powder.webp") },
   leaf: studioBackdrop("leaves"),
   powder: studioBackdrop("powder"),
   packing: studioBackdrop("packaging"),

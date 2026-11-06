@@ -28,3 +28,15 @@ enquiry records and original source video are excluded from this repository.
 
 Optimized images and film frames are included under `public/`. Original media
 remain in the local design checkout for future re-encoding.
+
+## Product catalogues
+
+`src/data/products.ts` holds the three client-supplied product entries. The home
+page shows a brief collection; `/products` links to individual detail pages.
+Original PDFs and extracted catalogue photographs are served locally under
+`public/catalogues` and `public/images`. Do not turn unspecified batch values
+or document listings into verified test results or certification claims.
+
+Product identifiers must also be allowed in `api/worker.js` and mapped in
+`backend/google-apps-script/Code.gs`. Deploy the Apps Script receiver before
+the Worker when extending the product range. Existing Moringa URLs remain valid.

@@ -11,7 +11,7 @@ export default function Footer() {
               <BrandLogo />
             </Link>
             <p className="footer-description">
-              Moringa leaf powder from Vadodara, India, for business buyers.
+              Moringa, beetroot and ashwagandha powders. Indian origins, international business buyers.
             </p>
             <div className="footer-socials">
               <a
@@ -33,7 +33,11 @@ export default function Footer() {
           <div>
             <p className="eyebrow">Explore</p>
             <div className="footer-links">
+              <Link to="/">Home</Link>
+              <Link to="/products">All products</Link>
               <Link to="/products/moringa-leaf-powder">Moringa powder</Link>
+              <Link to="/products/beetroot-powder">Beetroot powder</Link>
+              <Link to="/products/ashwagandha-powder">Ashwagandha powder</Link>
               <Link to="/quality-documentation">Quality & documents</Link>
               <Link to="/bulk-supply">Bulk supply</Link>
             <Link to="/global-markets">Export planning</Link>

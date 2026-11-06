@@ -19,6 +19,14 @@ test('bots, invalid emails and oversized notes are rejected',()=>{
   assert.throws(()=>validateEnquiry({...example,work_email:'bad\naddress@example.com'}));
   assert.throws(()=>validateEnquiry({...example,additional_notes:'x'.repeat(3501)}));
 });
+test('all catalogue products are preserved and unlisted products are rejected',()=>{
+  for (const product of ['moringa_leaf_powder','beetroot_powder','ashwagandha_powder']) {
+    assert.equal(validateEnquiry({...example,botanical_product:product}).botanical_product,product);
+  }
+  assert.equal(validateEnquiry(example).botanical_product,'moringa_leaf_powder');
+  for (const product of ['banana_powder','',{},['beetroot_powder']]) assert.throws(()=>validateEnquiry({...example,botanical_product:product}));
+  assert.equal(validateEnquiry({...example,enquiry_scope:'contact_message',additional_notes:'Hello'}).botanical_product,'general_inquiry');
+});
 test('foreign origins, wrong methods, malformed JSON, oversized requests and rate limits fail closed',async()=>{
   assert.equal((await worker.fetch(request(example,{Origin:'https://other.example'}),env)).status,403);
   assert.equal((await worker.fetch(new Request('https://altivonglobal.com/api/inquiry'),env)).status,405);
@@ -80,7 +88,7 @@ test('a saved enquiry is not duplicated on retry, including when its email alert
     MailApp:{sendEmail:message=>{alertDraft=message;alertAttempts++;throw new Error('Mail quota exceeded');}},
   });
   vm.runInContext(readFileSync(new URL('../backend/google-apps-script/Code.gs',import.meta.url),'utf8'),context);
-  const input={secret:'secret',hash:'a'.repeat(64),docket_id:'AG-'+example.request_id.toUpperCase(),enquiry:{...example,destination_port:'Hamburg',target_timing:'Next quarter',packaging_format:'Bulk'}};
+  const input={secret:'secret',hash:'a'.repeat(64),docket_id:'AG-'+example.request_id.toUpperCase(),enquiry:{...example,botanical_product:'beetroot_powder',destination_port:'Hamburg',target_timing:'Next quarter',packaging_format:'Bulk'}};
   const submit=value=>context.doPost({postData:{contents:JSON.stringify(value)}});
   assert.equal(submit({...input,secret:'wrong'}).ok,false);
   assert.equal(rows.length,0);
@@ -88,12 +96,36 @@ test('a saved enquiry is not duplicated on retry, including when its email alert
   assert.equal(rows.length,2);
   assert.equal(rows[1][21],'Failed — review the Sheet');
   assert.equal(rows[1][11],250);
+  assert.equal(rows[1][22],'Beetroot powder');
   assert.equal(alertDraft.to,'owner@example.com');
   assert.equal(alertDraft.replyTo,'qa@example.com');
   assert.match(alertDraft.body,/Hamburg/);
   assert.match(alertDraft.body,/Next quarter/);
+  assert.match(alertDraft.body,/Product: Beetroot powder/);
+  assert.match(alertDraft.subject,/Beetroot powder/);
   assert.equal(submit(input).ok,true);
   assert.equal(rows.length,2);
   assert.equal(alertAttempts,1);
   assert.equal(submit({...input,hash:'b'.repeat(64)}).ok,false);
+});
+test('adding the product column preserves legacy rows and refuses unrelated headers',()=>{
+  const context=vm.createContext({});
+  vm.runInContext(readFileSync(new URL('../backend/google-apps-script/Code.gs',import.meta.url),'utf8'),context);
+  const headers=Array.from(vm.runInContext('ENQUIRY_HEADERS',context));
+  const legacy=headers.slice(0,22);
+  const existingRow=['existing enquiry'];
+  const rows=[legacy,existingRow];
+  const sheet={getLastRow:()=>rows.length,getRange:(row,column)=>({
+    getValues:()=>[[...rows[row-1],...Array(23-rows[row-1].length).fill('')]],
+    setValue:value=>{rows[row-1][column-1]=value;},
+  })};
+  context.ensureEnquiryHeaders(sheet);
+  assert.deepEqual(rows[0],headers);
+  assert.deepEqual(rows[1],['existing enquiry']);
+  context.ensureEnquiryHeaders(sheet);
+  assert.deepEqual(rows[0],headers);
+  rows[0][0]='Unrelated user data';
+  assert.throws(()=>context.ensureEnquiryHeaders(sheet));
+  assert.equal(context.enquiryProduct({botanical_product:'ashwagandha_powder'}),'Ashwagandha powder');
+  assert.equal(context.enquiryProduct({botanical_product:'unknown'}),null);
 });

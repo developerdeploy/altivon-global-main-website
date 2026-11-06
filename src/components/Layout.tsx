@@ -7,6 +7,9 @@ import SceneBackdrop from "./SceneBackdrop";
 import { SITE_BACKDROPS } from "@/config/images";
 
 const pageBackgrounds: Record<string, keyof typeof SITE_BACKDROPS> = {
+  "/products": "leaf",
+  "/products/beetroot-powder": "beetroot",
+  "/products/ashwagandha-powder": "ashwagandha",
   "/products/moringa-leaf-powder": "powder",
   "/quality-documentation": "laboratory",
   "/bulk-supply": "packing",

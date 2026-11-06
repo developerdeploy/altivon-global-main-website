@@ -1,6 +1,27 @@
 // Deploy as the Google account that owns the private enquiries spreadsheet.
 // Configure SPREADSHEET_ID, ENQUIRY_SHARED_SECRET and ALERT_EMAIL in Script Properties.
-const ENQUIRY_HEADERS = ['Received UTC','Reference','Request ID','Payload hash','Type','Name','Company','Email','Phone','Country','Destination port','Quantity','Unit','Packing','Trade terms','Intended use','Target timing','Order frequency','Notes','Contact consent','Status','Email alert'];
+const ENQUIRY_HEADERS = ['Received UTC','Reference','Request ID','Payload hash','Type','Name','Company','Email','Phone','Country','Destination port','Quantity','Unit','Packing','Trade terms','Intended use','Target timing','Order frequency','Notes','Contact consent','Status','Email alert','Product'];
+
+function ensureEnquiryHeaders(sheet) {
+  if (sheet.getLastRow() === 0) sheet.appendRow(ENQUIRY_HEADERS);
+  const headers = sheet.getRange(1,1,1,ENQUIRY_HEADERS.length).getValues()[0];
+  // Add the product column after existing columns so saved records and alert statuses stay intact.
+  if (headers.slice(0,22).join('|') === ENQUIRY_HEADERS.slice(0,22).join('|') && !headers[22]) {
+    sheet.getRange(1,23).setValue('Product');
+    headers[22] = 'Product';
+  }
+  if (headers.join('|') !== ENQUIRY_HEADERS.join('|')) throw new Error('The enquiries headers do not match.');
+}
+
+function enquiryProduct(item) {
+  if (item.enquiry_scope === 'contact_message') return 'General enquiry';
+  switch (item.botanical_product == null ? 'moringa_leaf_powder' : item.botanical_product) {
+    case 'moringa_leaf_powder': return 'Moringa leaf powder';
+    case 'beetroot_powder': return 'Beetroot powder';
+    case 'ashwagandha_powder': return 'Ashwagandha powder';
+    default: return null;
+  }
+}
 
 function setupEnquiries() {
   const properties = PropertiesService.getScriptProperties();
@@ -12,8 +33,7 @@ function setupEnquiries() {
   const existingId = properties.getProperty('SPREADSHEET_ID');
   const book = existingId ? SpreadsheetApp.openById(existingId) : SpreadsheetApp.create('AltivonGlobal Enquiries');
   const sheet = book.getSheetByName('Enquiries') || (existingId ? book.insertSheet('Enquiries') : book.getSheets()[0].setName('Enquiries'));
-  if (sheet.getLastRow() === 0) sheet.appendRow(ENQUIRY_HEADERS);
-  if (sheet.getRange(1,1,1,ENQUIRY_HEADERS.length).getValues()[0].join('|') !== ENQUIRY_HEADERS.join('|')) throw new Error('The enquiries headers do not match.');
+  ensureEnquiryHeaders(sheet);
   sheet.setFrozenRows(1);
   sheet.getRange(1,1,1,ENQUIRY_HEADERS.length).setFontWeight('bold').setBackground('#183c30').setFontColor('#ffffff');
   sheet.setColumnWidths(1,ENQUIRY_HEADERS.length,160);
@@ -43,12 +63,16 @@ function doPost(event) {
     try {
       const book = SpreadsheetApp.openById(properties.getProperty('SPREADSHEET_ID'));
       const sheet = book.getSheetByName('Enquiries');
-      const ready = sheet && sheet.getRange(1,1,1,ENQUIRY_HEADERS.length).getValues()[0].join('|') === ENQUIRY_HEADERS.join('|');
+      if (!sheet) throw new Error('Missing enquiries tab.');
+      ensureEnquiryHeaders(sheet);
+      const ready = true;
       return jsonResponse({ok:!!ready,spreadsheet_url:book.getUrl(),alert_email:properties.getProperty('ALERT_EMAIL'),email_quota:MailApp.getRemainingDailyQuota()});
     } catch (_) {return jsonResponse({ok:false});}
   }
   const item = input.enquiry;
   if (!item || !/^[0-9a-f-]{36}$/i.test(item.request_id || '') || !/^[0-9a-f]{64}$/.test(input.hash || '') || input.docket_id !== 'AG-' + item.request_id.toUpperCase()) return jsonResponse({ok:false});
+  const product = enquiryProduct(item);
+  if (!product) return jsonResponse({ok:false});
   const lock = LockService.getScriptLock();
   if (!lock.tryLock(10000)) return jsonResponse({ok:false});
   let sheet, row;
@@ -57,9 +81,7 @@ function doPost(event) {
     const book = SpreadsheetApp.openById(properties.getProperty('SPREADSHEET_ID'));
     sheet = book.getSheetByName('Enquiries');
     if (!sheet) throw new Error('Missing enquiries tab.');
-    if (sheet.getLastRow() === 0) sheet.appendRow(ENQUIRY_HEADERS);
-    const headers = sheet.getRange(1,1,1,ENQUIRY_HEADERS.length).getValues()[0];
-    if (headers.join('|') !== ENQUIRY_HEADERS.join('|')) throw new Error('Header mismatch.');
+    ensureEnquiryHeaders(sheet);
     if (sheet.getLastRow() > 1) {
       const existing = sheet.getRange(2,3,sheet.getLastRow()-1,1).createTextFinder(item.request_id).matchEntireCell(true).findNext();
       if (existing) {
@@ -67,7 +89,7 @@ function doPost(event) {
         return jsonResponse({ok:true,docket_id:input.docket_id});
       }
     }
-    const values = [new Date().toISOString(), input.docket_id, item.request_id, input.hash, item.enquiry_scope, item.contact_name, item.company_name, item.work_email, item.phone_number, item.country, item.destination_port, item.order_quantity, item.quantity_unit, item.packaging_format, item.incoterms_preference, item.intended_use, item.target_timing, item.order_frequency, item.additional_notes, item.consent === true ? 'Agreed' : '', 'New', recipient ? 'Pending' : 'Not configured'];
+    const values = [new Date().toISOString(), input.docket_id, item.request_id, input.hash, item.enquiry_scope, item.contact_name, item.company_name, item.work_email, item.phone_number, item.country, item.destination_port, item.order_quantity, item.quantity_unit, item.packaging_format, item.incoterms_preference, item.intended_use, item.target_timing, item.order_frequency, item.additional_notes, item.consent === true ? 'Agreed' : '', 'New', recipient ? 'Pending' : 'Not configured', product];
     sheet.appendRow(values.map(sheetText));
     row = sheet.getLastRow();
     SpreadsheetApp.flush();
@@ -75,8 +97,8 @@ function doPost(event) {
   finally { lock.releaseLock(); }
   if (recipient) {
     try {
-      const body = ['New AltivonGlobal enquiry', 'Reference: '+input.docket_id, 'Type: '+item.enquiry_scope, 'Name: '+item.contact_name, 'Company: '+item.company_name, 'Email: '+item.work_email, 'Phone: '+item.phone_number, 'Country: '+item.country, 'Destination port: '+item.destination_port, 'Quantity (kg): '+(item.order_quantity == null ? 'To be discussed' : item.order_quantity), 'Packing: '+item.packaging_format, 'Trade terms: '+item.incoterms_preference, 'Intended use: '+item.intended_use, 'Target timing: '+item.target_timing, 'Order frequency: '+item.order_frequency, 'Notes: '+item.additional_notes, '', 'The buyer agreed to be contacted about this enquiry.'].join('\n');
-      MailApp.sendEmail({to:recipient,subject:'AltivonGlobal enquiry '+input.docket_id,body:body,replyTo:item.work_email,name:'AltivonGlobal Enquiries'});
+      const body = ['New AltivonGlobal enquiry', 'Reference: '+input.docket_id, 'Product: '+product, 'Type: '+item.enquiry_scope, 'Name: '+item.contact_name, 'Company: '+item.company_name, 'Email: '+item.work_email, 'Phone: '+item.phone_number, 'Country: '+item.country, 'Destination port: '+item.destination_port, 'Quantity (kg): '+(item.order_quantity == null ? 'To be discussed' : item.order_quantity), 'Packing: '+item.packaging_format, 'Trade terms: '+item.incoterms_preference, 'Intended use: '+item.intended_use, 'Target timing: '+item.target_timing, 'Order frequency: '+item.order_frequency, 'Notes: '+item.additional_notes, '', 'The buyer agreed to be contacted about this enquiry.'].join('\n');
+      MailApp.sendEmail({to:recipient,subject:'AltivonGlobal '+product+' enquiry '+input.docket_id,body:body,replyTo:item.work_email,name:'AltivonGlobal Enquiries'});
       sheet.getRange(row,22).setValue('Sent');
     } catch (_) {
       // The enquiry is already saved; email failure must not create a duplicate submission.

@@ -11,6 +11,7 @@ import "./product-design.css";
 import "./altivon-palette.css";
 import "./themes.css";
 import "./scene-backgrounds.css";
+import "./catalogue.css";
 
 const rootElement = document.getElementById("root")!;
 

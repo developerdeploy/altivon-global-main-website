@@ -15,9 +15,9 @@ async (page) => {
   };
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('http://127.0.0.1:4174/');
-  await page.locator('#journey-details[data-reveal]').waitFor({state:'attached'});
-  check(!await visible(page.locator('#journey-details')), 'Details wait for the reader to reach them');
-  check(await page.locator('.cinematic-home > .image-surface').count() === 10, 'All ten post-film sections have imagery');
+  await page.locator('#products[data-reveal]').waitFor({state:'attached'});
+  check(!await visible(page.locator('#products')), 'Details wait for the reader to reach them');
+  check(await page.locator('.cinematic-home > .image-surface').count() === 9, 'All nine post-film sections have imagery');
   for (const section of await page.locator('.cinematic-home > .image-surface').all()) {
     await reveal(section);
     const image = section.locator('.scene-backdrop img');
@@ -25,20 +25,20 @@ async (page) => {
     check(await image.evaluate(img => img.naturalWidth > 0), `Section image loads: ${await section.getAttribute('id') || 'information'}`);
     check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Section stays within the mobile width');
   }
-  const details = page.locator('#journey-details');
+  const details = page.locator('#products');
   const quote = page.locator('#quotation-brief');
   await reveal(quote);
-  await quote.locator('select').first().selectOption('Germany');
-  await quote.locator('select').first().evaluate(el => el.blur());
+  await quote.locator('label').filter({hasText:'Destination'}).locator('select').selectOption('Germany');
+  await quote.locator('label').filter({hasText:'Destination'}).locator('select').evaluate(el => el.blur());
   for (let pass = 0; pass < 2; pass++) {
-    await page.locator('#ingredient').scrollIntoViewIfNeeded();
-    await page.waitForFunction(() => document.querySelector('#journey-details').dataset.visible === 'false');
+    await page.locator('.buyer-confidence').scrollIntoViewIfNeeded();
+    await page.waitForFunction(() => document.querySelector('#products').dataset.visible === 'false');
     await reveal(details);
     check(await details.getAttribute('data-visible') === 'true', `Upward reveal replays on pass ${pass + 1}`);
     await page.locator('#export-journey').evaluate(el => scrollTo(0, el.offsetTop));
     await page.waitForFunction(() => document.querySelector('#quotation-brief').dataset.visible === 'false');
     await reveal(quote);
-    check(await quote.locator('select').first().inputValue() === 'Germany', `Downward reveal replays and keeps form entries on pass ${pass + 1}`);
+    check(await quote.locator('label').filter({hasText:'Destination'}).locator('select').inputValue() === 'Germany', `Downward reveal replays and keeps form entries on pass ${pass + 1}`);
   }
   check(await quote.evaluate(el => el.offsetHeight >= innerHeight - 84), 'Quotation scene occupies at least a full screen below the header');
   check(await page.locator('.home-info-card > .site-icon,.buyer-card-top').count() === 0, 'Information rows have no decorative icon badges');
@@ -49,15 +49,14 @@ async (page) => {
   check(await page.locator('#quotation-brief').getAttribute('data-visible') === 'true', 'Keyboard focus immediately reveals the quotation section');
   await page.emulateMedia({ reducedMotion: 'reduce' });
   check(await page.locator('[data-reveal]').evaluateAll(nodes => nodes.every(el => getComputedStyle(el).opacity === '1')), 'Reduced motion leaves every section visible');
-  const centered = await page.locator('#ingredient .scene-backdrop').boundingBox();
+  const centered = await page.locator('#products .scene-backdrop').boundingBox();
   check(Math.abs(centered.x) < 2 && Math.abs(centered.width - 390) < 2, 'Reduced motion keeps photo backgrounds centered');
   await page.emulateMedia({ reducedMotion: 'no-preference' });
-  await page.getByRole('button', { name: 'Open menu', exact: true }).click();
-  await page.getByRole('navigation', { name: 'Mobile navigation' }).getByRole('link', { name: 'Quality', exact: true }).click();
+  await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Quality', exact: true }).click();
   await page.locator('.page-intro[data-reveal][data-visible=true]').waitFor();
   await reveal(page.locator('.page-intro'));
   check(await visible(page.locator('.page-intro')), 'Lazy page content reveals after navigation from the homepage');
-  const routes = ['products/moringa-leaf-powder', 'quality-documentation', 'bulk-supply', 'global-markets', 'about', 'contact', 'request-quote', 'enquiry-received', 'privacy-policy', 'missing-page'];
+  const routes = ['products', 'products/beetroot-powder', 'products/ashwagandha-powder', 'products/moringa-leaf-powder', 'quality-documentation', 'bulk-supply', 'global-markets', 'about', 'contact', 'request-quote', 'enquiry-received', 'privacy-policy', 'missing-page'];
   for (const value of ['dark', 'light']) {
     await theme(value);
     for (const route of routes) {

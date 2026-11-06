@@ -6,9 +6,9 @@ export default function BulkSupplyPage() {
     <div className="section-container page-space">
       <PageIntro
         eyebrow="Bulk supply"
-        seoTitle="Bulk Moringa Leaf Powder and Private Label Enquiries"
-        title="Moringa powder packaging & private label."
-        description="Discuss bulk supply, custom packing and private label for conventional moringa leaf powder. Minimums and details are confirmed per enquiry."
+        seoTitle="Bulk Botanical Powders and Private Label Enquiries"
+        title="Botanical powder packaging & private label."
+        description="Discuss bulk supply, custom packing and private label for moringa, beetroot and ashwagandha powders. Minimums and details are confirmed per enquiry."
         path="/bulk-supply"
       />
       <div className="split-feature">

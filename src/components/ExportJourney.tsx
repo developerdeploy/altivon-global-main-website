@@ -202,7 +202,7 @@ export default function ExportJourney() {
           <div className="journey-progress" aria-hidden="true"><span /></div>
         </div>
         <span className="journey-buffering" aria-hidden="true">Loading scene…</span>
-        {failed && <p className="journey-load-error" role="status">The scene could not load. <a href="#journey-details">Read the journey details</a> or <a href="#quotation-brief">build your quotation</a>.</p>}
+        {failed && <p className="journey-load-error" role="status">The scene could not load. <a href="#products">Explore the products</a> or <a href="#quotation-brief">build your quotation</a>.</p>}
       </div>
     </section>
   );

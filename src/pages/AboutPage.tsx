@@ -5,7 +5,7 @@ export default function AboutPage() {
       <PageIntro
         eyebrow="About us"
         title="About AltivonGlobal."
-        description="Moringa leaf powder supplier and exporter in Vadodara, Gujarat, India. Discuss your business requirements with Nirmit Shah."
+        description="Botanical powder supplier and exporter in Vadodara, Gujarat, India. Discuss your business requirements with Nirmit Shah."
         path="/about"
       />
       <div className="split-feature about-feature">
@@ -24,7 +24,7 @@ export default function AboutPage() {
           </h2>
           <p>
             We help international businesses source botanical ingredients from
-            India, beginning with moringa leaf powder.
+            India, including moringa, beetroot and ashwagandha powders.
           </p>
           <p>
             From the first enquiry to shipment planning, we coordinate sourcing,

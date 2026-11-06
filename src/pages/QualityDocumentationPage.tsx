@@ -5,7 +5,7 @@ import { Disclosure, Icon, PageIntro, QuoteCTA } from "@/components/PageElements
 export default function QualityDocumentationPage() {
   return (
     <div className="section-container page-space">
-      <PageIntro eyebrow="Quality & documentation" seoTitle="Moringa Powder COA, Specification and Test Reports" title="Know the document. Understand the evidence." description="Learn how a specification, batch COA, independent test report and facility certificate differ, and what to ask for before ordering moringa powder." path="/quality-documentation" />
+      <PageIntro eyebrow="Quality & documentation" seoTitle="Botanical Powder COA, Specification and Test Reports" title="Know the document. Understand the evidence." description="Learn how a specification, batch COA, independent test report and facility certificate differ, and what to ask for before ordering moringa, beetroot or ashwagandha powder." path="/quality-documentation" />
       <div className="split-feature">
         <div className="feature-copy">
           <p className="eyebrow">CLARITY BEFORE COMMITMENT</p>
