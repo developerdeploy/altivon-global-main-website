@@ -2,12 +2,14 @@ import {
   createContext,
   useContext,
   useEffect,
+  startTransition,
   useState,
   type ReactNode,
 } from "react";
 import { useLocation } from "react-router-dom";
 
 const MotionContext = createContext({
+  ready: false,
   enabled: false,
   reduced: false,
   quality: "full" as "full" | "light",
@@ -15,6 +17,7 @@ const MotionContext = createContext({
 export const useSiteMotion = () => useContext(MotionContext);
 
 export function MotionSystem({ children }: { children: ReactNode }) {
+  const [ready, setReady] = useState(false);
   const [requested, setRequested] = useState(false);
   const [quality, setQuality] = useState<"full" | "light">("full");
   const [reduced, setReduced] = useState(false);
@@ -26,18 +29,14 @@ export function MotionSystem({ children }: { children: ReactNode }) {
         connection?: { saveData?: boolean; effectiveType?: string };
       }
     ).connection;
-    setRequested(
-      !connection?.saveData &&
-      !/^(slow-2g|2g)$/.test(connection?.effectiveType || "")
-    );
-    setQuality(
-      window.matchMedia("(pointer: coarse), (max-width: 767px)").matches ||
-      navigator.hardwareConcurrency <= 4
-        ? "light"
-        : "full",
-    );
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduced(preference.matches);
+    // Let the prerendered route hydrate before changing its motion context.
+    startTransition(() => {
+      setRequested(!connection?.saveData && !/^(slow-2g|2g)$/.test(connection?.effectiveType || ""));
+      setQuality(window.matchMedia("(pointer: coarse), (max-width: 767px)").matches || navigator.hardwareConcurrency <= 4 ? "light" : "full");
+      setReduced(preference.matches);
+      setReady(true);
+    });
     const change = () => setReduced(preference.matches);
     preference.addEventListener("change", change);
     return () => preference.removeEventListener("change", change);
@@ -103,6 +102,7 @@ export function MotionSystem({ children }: { children: ReactNode }) {
   return (
     <MotionContext.Provider
       value={{
+        ready,
         enabled,
         reduced,
         quality,

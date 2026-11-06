@@ -4,6 +4,7 @@ import {
   useEffect,
   useMemo,
   useState,
+  startTransition,
   type ReactNode,
 } from "react";
 
@@ -17,8 +18,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
   useEffect(() => {
     const current = document.documentElement.dataset.theme;
-    setTheme(current === "dark" ? "dark" : "light");
-    setReady(true);
+    startTransition(() => {
+      setTheme(current === "dark" ? "dark" : "light");
+      setReady(true);
+    });
   }, []);
   useEffect(() => {
     if (!ready) return;

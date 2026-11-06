@@ -57,6 +57,7 @@
   .cinema-copy { right: 43%; }
 }
 @media (max-width: 800px) {
+  .export-journey { --cinema-header: 80px; }
   .export-journey { height: 800svh; }
   .journey-film { left: 0; transform-origin: center; }
   .journey-film canvas, .journey-poster { object-position: 48% center; }

@@ -4,16 +4,16 @@ import { Icon } from "./PageElements";
 import { useSiteMotion } from "./MotionSystem";
 import { journeyStages } from "@/data/exportJourney";
 import { exportFrames } from "@/data/exportFrames";
-import "./export-journey.css";
 
 export default function ExportJourney() {
   const root = useRef<HTMLElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const [active, setActive] = useState(0);
   const [failed, setFailed] = useState(false);
-  const { enabled, quality } = useSiteMotion();
+  const { ready, enabled, quality } = useSiteMotion();
 
   useEffect(() => {
+    if (!ready) return;
     const element = root.current;
     const surface = canvas.current;
     const context = surface?.getContext("2d", { alpha: false });
@@ -177,7 +177,7 @@ export default function ExportJourney() {
       cache.forEach(image => { image.onload = null; image.onerror = null; if (!image.complete) image.src = ""; });
       cache.clear();
     };
-  }, [enabled, quality]);
+  }, [ready, enabled, quality]);
 
   return (
     <section ref={root} id="export-journey" className="export-journey" aria-label="From moringa leaf to export planning">
