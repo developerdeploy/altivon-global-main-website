@@ -1,0 +1,33 @@
+{
+  "name": "altivonglobal",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build && node scripts/prepare-preview.mjs",
+    "prerender": "node scripts/prerender.js",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit --project tsconfig.json",
+    "server": "node server/index.js"
+  },
+  "dependencies": {
+    "nodemailer": "^10.1.2",
+    "pg": "^8.23.1",
+    "react": "^19.1.2",
+    "react-dom": "^19.1.2",
+    "react-helmet-async": "^2.0.5",
+    "react-router-dom": "^7.6.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^6.0.1",
+    "autoprefixer": "^10.4.21",
+    "playwright-core": "^1.64.1",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17",
+    "typescript": "~5.8.3",
+    "vite": "^8.0.1"
+  }
+}

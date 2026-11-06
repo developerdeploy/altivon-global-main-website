@@ -1,0 +1,11 @@
+{
+  "name": "AltivonGlobal",
+  "short_name": "AltivonGlobal",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "theme_color": "#08090b",
+  "background_color": "#08090b",
+  "display": "browser"
+}

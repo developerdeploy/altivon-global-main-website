@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /enquiry-received
+Disallow: /server/
+
+Sitemap: https://altivonglobal.com/sitemap.xml
