@@ -115,7 +115,7 @@ export const journeyStages = [
       "Documents and testing you require",
       "Importer responsibilities in your country clarified"
     ],
-    "detail": "A useful quotation brief includes your company and contact, intended use, destination country and preferred port, approximate quantity, packing preference, target timing, and required tests or documents. Product status and import obligations vary by market and use. Confirm the applicable requirements with your importer or adviser before ordering. Availability, price, freight and timing are confirmed for the proposed supply. A quotation enquiry is not an order or a price commitment. This client preview does not send enquiries.",
+    "detail": "A useful quotation brief includes your company and contact, intended use, destination country and preferred port, approximate quantity, packing preference, target timing, and required tests or documents. Product status and import obligations vary by market and use. Confirm the applicable requirements with your importer or adviser before ordering. Availability, price, freight and timing are confirmed for the proposed supply. A quotation enquiry is not an order or a price commitment.",
     "link": "/request-quote",
     "cta": "Start your quotation brief",
     "displayTitle": "YOUR NEXT\nCHAPTER."

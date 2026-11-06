@@ -2,6 +2,9 @@
   --photo-veil: #0d0f12c7;
   --photo-glass: #15191fdb;
 }
+.contact-consent { display: block; margin-block: 20px; font-size: 13px; line-height: 1.8; color: var(--text-secondary); }
+.contact-consent input { width: 18px; height: 18px; margin-right: 7px; vertical-align: middle; accent-color: var(--accent); }
+.contact-consent a { text-decoration: underline; }
 [data-theme="light"] {
   --photo-veil: #f7f5f09e;
   --photo-glass: #ffffffe0;

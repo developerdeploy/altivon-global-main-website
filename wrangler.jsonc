@@ -1,12 +1,20 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "altivon-global-main-website",
+  "main": "api/worker.js",
   "compatibility_date": "2026-11-06",
   "build": { "command": "npm run build" },
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"],
     "not_found_handling": "single-page-application"
   },
+  "ratelimits": [{
+    "name": "ENQUIRY_LIMITER",
+    "namespace_id": "1001",
+    "simple": { "limit": 5, "period": 60 }
+  }],
   "routes": [
     { "pattern": "altivonglobal.com/*", "zone_name": "altivonglobal.com" }
   ]

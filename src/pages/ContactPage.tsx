@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { COMPANY } from "@/config/publicCompany";
+import { createEnquirySubmission } from "@/lib/sendEnquiry";
 import {
   Disclosure,
   Icon,
-  IS_PREVIEW,
+  ENQUIRIES_ENABLED,
   PageIntro,
   PreviewNotice,
 } from "@/components/PageElements";
@@ -13,19 +14,15 @@ export default function ContactPage() {
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
+  const [sendEnquiry] = useState(createEnquirySubmission);
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (IS_PREVIEW) return;
+    if (!ENQUIRIES_ENABLED) return;
     const form = new FormData(event.currentTarget);
     setBusy(true);
     setError("");
     try {
-      const response = await fetch(
-        `${(import.meta.env.VITE_API_URL || "/api").replace(/\/$/, "")}/inquiry`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
+      await sendEnquiry({
             contact_name: String(form.get("name") || "").trim(),
             company_name: "Direct Contact Form",
             work_email: String(form.get("email") || "").trim(),
@@ -33,14 +30,11 @@ export default function ContactPage() {
             enquiry_scope: "contact_message",
             destination_market: "Worldwide",
             botanical_product: "general_inquiry",
-            order_quantity: 1,
+            order_quantity: null,
             quantity_unit: "kg",
-          }),
-        },
-      );
-      const data = await response.json();
-      if (!response.ok)
-        throw new Error(data.message || "Message could not be sent.");
+            website_url: String(form.get("website") || ""),
+            consent: form.get("consent") === "on",
+          });
       setSent(true);
     } catch (cause) {
       setError(
@@ -101,6 +95,7 @@ export default function ContactPage() {
             </p>
           ) : (
             <form onSubmit={submit}>
+              <label hidden aria-hidden="true">Leave empty<input name="website" tabIndex={-1} autoComplete="off" /></label>
               <div className="form-grid">
                 <label>
                   Your name
@@ -132,6 +127,7 @@ export default function ContactPage() {
                   />
                 </label>
               </div>
+              <label className="contact-consent"><input name="consent" type="checkbox" required /> I agree to be contacted about this enquiry. <Link to="/privacy-policy">Privacy policy</Link>.</label>
               <PreviewNotice />
               {error && (
                 <p className="form-error" role="alert">
@@ -141,7 +137,7 @@ export default function ContactPage() {
               <button
                 className="btn-primary"
                 type="submit"
-                disabled={IS_PREVIEW || busy}
+                disabled={!ENQUIRIES_ENABLED || busy}
               >
                 {busy ? "Sending…" : "Send message"}
                 <Icon>arrow_forward</Icon>

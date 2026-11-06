@@ -159,8 +159,9 @@ export function Disclosure({
   );
 }
 export const IS_PREVIEW = import.meta.env.VITE_CLIENT_PREVIEW === "true";
+export const ENQUIRIES_ENABLED = import.meta.env.VITE_ENQUIRIES_ENABLED === "true";
 export function PreviewNotice() {
-  return IS_PREVIEW ? (
+  return !ENQUIRIES_ENABLED ? (
     <p className="preview-note">
       Client preview · Form delivery is not connected yet.
     </p>

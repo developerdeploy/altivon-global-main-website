@@ -4,9 +4,10 @@ import { countries } from "@/data/formData";
 import { COMPANY } from "@/config/publicCompany";
 import { SITE_IMAGES } from "@/config/images";
 import { imageVariant } from "@/components/ProductImage";
+import { createEnquirySubmission } from "@/lib/sendEnquiry";
 import {
   Icon,
-  IS_PREVIEW,
+  ENQUIRIES_ENABLED,
   PageIntro,
   PreviewNotice,
 } from "@/components/PageElements";
@@ -20,6 +21,7 @@ export default function RequestQuotePage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [consent, setConsent] = useState(false);
+  const [sendEnquiry] = useState(createEnquirySubmission);
   const [draft, setDraft] = useState({
     name: "",
     company: "",
@@ -65,19 +67,23 @@ export default function RequestQuotePage() {
       advance(step + 1);
       return;
     }
-    if (IS_PREVIEW) return;
+    if (!ENQUIRIES_ENABLED) return;
     const payload = {
       contact_name: draft.name.trim(),
       company_name: draft.company.trim(),
       work_email: draft.email.trim(),
       country: draft.country,
       destination_market: draft.country,
-      destination_port: draft.port.trim() || "Main Commercial Port",
+      destination_port: draft.port.trim(),
       botanical_product: "moringa_leaf_powder",
-      order_quantity: Number(draft.quantity) || 1000,
+      order_quantity: draft.quantity ? Number(draft.quantity) : null,
       quantity_unit: "kg",
       enquiry_scope: type,
-      additional_notes: `Intended use: ${draft.application}. Timing: ${draft.targetTiming || "To be discussed"}. Frequency: ${draft.orderFrequency || "To be discussed"}. ${draft.notes.trim()}`,
+      additional_notes: draft.notes.trim(),
+      intended_use: draft.application,
+      target_timing: draft.targetTiming,
+      order_frequency: draft.orderFrequency,
+      consent,
       phone_number: draft.phone.trim(),
       packaging_format: draft.packaging,
       incoterms_preference: draft.terms,
@@ -86,20 +92,7 @@ export default function RequestQuotePage() {
     setBusy(true);
     setError("");
     try {
-      const response = await fetch(
-        `${(import.meta.env.VITE_API_URL || "/api").replace(/\/$/, "")}/inquiry`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        },
-      );
-      const data = await response.json();
-      if (!response.ok || !data.docket_id)
-        throw new Error(
-          data.message ||
-            "Your enquiry could not be sent. Please contact us directly.",
-        );
+      const data = await sendEnquiry(payload);
       navigate("/enquiry-received", {
         state: { ...payload, ...data.data, docket_id: data.docket_id },
       });
@@ -321,7 +314,7 @@ export default function RequestQuotePage() {
               <div className="review-intro">
                 <p>
                   Your request is ready to review.{" "}
-                  {IS_PREVIEW
+                  {!ENQUIRIES_ENABLED
                     ? "Nothing will be sent from this preview."
                     : "Check your details before sending."}
                 </p>
@@ -391,7 +384,7 @@ export default function RequestQuotePage() {
             <button
               className="btn-primary"
               type="submit"
-              disabled={busy || (step === 3 && IS_PREVIEW)}
+              disabled={busy || (step === 3 && !ENQUIRIES_ENABLED)}
             >
               {busy
                 ? "Sending…"
@@ -403,7 +396,7 @@ export default function RequestQuotePage() {
               <Icon>arrow_forward</Icon>
             </button>
           </div>
-          {IS_PREVIEW && step < 3 && (
+          {!ENQUIRIES_ENABLED && step < 3 && (
             <p className="quiet-note">
               Try the complete enquiry journey. Delivery stays off in this
               client preview.

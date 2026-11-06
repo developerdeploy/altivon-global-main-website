@@ -11,3 +11,6 @@ stitch_design/
 
 .wrangler/
 .dev.vars*
+.local/
+.clasp.json
+.clasprc.json
