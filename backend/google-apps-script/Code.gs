@@ -28,6 +28,7 @@ function jsonResponse(value) {
 }
 
 function sheetText(value) {
+  if (typeof value === 'number' || typeof value === 'boolean') return value;
   const text = String(value == null ? '' : value);
   return /^[\s]*[=+@-]/.test(text) ? "'" + text : text;
 }
@@ -74,7 +75,7 @@ function doPost(event) {
   finally { lock.releaseLock(); }
   if (recipient) {
     try {
-      const body = ['New AltivonGlobal enquiry', 'Reference: '+input.docket_id, 'Type: '+item.enquiry_scope, 'Name: '+item.contact_name, 'Company: '+item.company_name, 'Email: '+item.work_email, 'Phone: '+item.phone_number, 'Country: '+item.country, 'Quantity (kg): '+(item.order_quantity == null ? 'To be discussed' : item.order_quantity), 'Intended use: '+item.intended_use, 'Notes: '+item.additional_notes, '', 'Open enquiries: https://docs.google.com/spreadsheets/d/'+properties.getProperty('SPREADSHEET_ID')+'/edit'].join('\n');
+      const body = ['New AltivonGlobal enquiry', 'Reference: '+input.docket_id, 'Type: '+item.enquiry_scope, 'Name: '+item.contact_name, 'Company: '+item.company_name, 'Email: '+item.work_email, 'Phone: '+item.phone_number, 'Country: '+item.country, 'Destination port: '+item.destination_port, 'Quantity (kg): '+(item.order_quantity == null ? 'To be discussed' : item.order_quantity), 'Packing: '+item.packaging_format, 'Trade terms: '+item.incoterms_preference, 'Intended use: '+item.intended_use, 'Target timing: '+item.target_timing, 'Order frequency: '+item.order_frequency, 'Notes: '+item.additional_notes, '', 'The buyer agreed to be contacted about this enquiry.'].join('\n');
       MailApp.sendEmail({to:recipient,subject:'AltivonGlobal enquiry '+input.docket_id,body:body,replyTo:item.work_email,name:'AltivonGlobal Enquiries'});
       sheet.getRange(row,22).setValue('Sent');
     } catch (_) {

@@ -52,10 +52,12 @@ test('Sheets formula-like text is stored literally',()=>{
   vm.runInContext(readFileSync(new URL('../backend/google-apps-script/Code.gs',import.meta.url),'utf8'),context);
   for(const text of ['=IMPORTXML("url")','+919999999999','  @formula','-2+3']) assert.equal(context.sheetText(text),"'"+text);
   assert.equal(context.sheetText('Plain enquiry'),'Plain enquiry');
+  assert.equal(context.sheetText(250),250);
+  assert.equal(context.sheetText(null),'');
 });
 test('a saved enquiry is not duplicated on retry, including when its email alert fails',()=>{
   const rows=[];
-  let alertAttempts=0;
+  let alertAttempts=0, alertDraft;
   const sheet={
     getLastRow:()=>rows.length,
     appendRow:values=>rows.push(values),
@@ -75,16 +77,21 @@ test('a saved enquiry is not duplicated on retry, including when its email alert
     ContentService:{MimeType:{JSON:'json'},createTextOutput:text=>({setMimeType:()=>JSON.parse(text)})},
     LockService:{getScriptLock:()=>({tryLock:()=>true,releaseLock:()=>{}})},
     SpreadsheetApp:{openById:()=>({getSheetByName:()=>sheet}),flush:()=>{}},
-    MailApp:{sendEmail:()=>{alertAttempts++;throw new Error('Mail quota exceeded');}},
+    MailApp:{sendEmail:message=>{alertDraft=message;alertAttempts++;throw new Error('Mail quota exceeded');}},
   });
   vm.runInContext(readFileSync(new URL('../backend/google-apps-script/Code.gs',import.meta.url),'utf8'),context);
-  const input={secret:'secret',hash:'a'.repeat(64),docket_id:'AG-'+example.request_id.toUpperCase(),enquiry:example};
+  const input={secret:'secret',hash:'a'.repeat(64),docket_id:'AG-'+example.request_id.toUpperCase(),enquiry:{...example,destination_port:'Hamburg',target_timing:'Next quarter',packaging_format:'Bulk'}};
   const submit=value=>context.doPost({postData:{contents:JSON.stringify(value)}});
   assert.equal(submit({...input,secret:'wrong'}).ok,false);
   assert.equal(rows.length,0);
   assert.equal(submit(input).ok,true);
   assert.equal(rows.length,2);
   assert.equal(rows[1][21],'Failed — review the Sheet');
+  assert.equal(rows[1][11],250);
+  assert.equal(alertDraft.to,'owner@example.com');
+  assert.equal(alertDraft.replyTo,'qa@example.com');
+  assert.match(alertDraft.body,/Hamburg/);
+  assert.match(alertDraft.body,/Next quarter/);
   assert.equal(submit(input).ok,true);
   assert.equal(rows.length,2);
   assert.equal(alertAttempts,1);
