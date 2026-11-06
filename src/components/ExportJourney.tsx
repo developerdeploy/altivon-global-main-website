@@ -183,7 +183,7 @@ export default function ExportJourney() {
     <section ref={root} id="export-journey" className="export-journey" aria-label="From moringa leaf to export planning">
       <div className="cinema-stage">
         <div className="journey-film" role="img" aria-label={`Illustrative export sequence: ${journeyStages[active].name.toLowerCase()}`}>
-          <img className="journey-poster" src={`${import.meta.env.BASE_URL}images/export-journey-poster.webp`} width="1440" height="810" alt="" decoding="async" fetchPriority="high" />
+          <picture><source media="(max-width: 800px)" srcSet={`${import.meta.env.BASE_URL}images/export-journey-poster-mobile.webp`} /><img className="journey-poster" src={`${import.meta.env.BASE_URL}images/export-journey-poster.webp`} width="1440" height="810" alt="" decoding="async" fetchPriority="high" /></picture>
           <canvas ref={canvas} width="1440" height="810" aria-hidden="true" />
         </div>
         <div className="cinema-shade" aria-hidden="true" />

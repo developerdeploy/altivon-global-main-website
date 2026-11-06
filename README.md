@@ -20,8 +20,9 @@ The route sends all root-domain requests to the Worker's static assets.
 ## Current scope
 
 The website preserves the reviewed frontend, scroll sequence, light/dark themes,
-and enquiry review flow. `VITE_ENQUIRIES_ENABLED` controls form delivery separately
-from the existing `VITE_CLIENT_PREVIEW` noindex setting. The enquiry receiver
+and enquiry review flow. Mobile navigation is fixed to the bottom of the viewport.
+`VITE_ENQUIRIES_ENABLED` controls form delivery separately from `VITE_CLIENT_PREVIEW`,
+which is false in production so public pages are indexable. The enquiry receiver
 runs in the Worker and saves to a private Google Sheet through Apps Script,
 with team email alerts. See `backend/README.md` for configuration. Credentials,
 enquiry records and original source video are excluded from this repository.
@@ -40,3 +41,18 @@ or document listings into verified test results or certification claims.
 Product identifiers must also be allowed in `api/worker.js` and mapped in
 `backend/google-apps-script/Code.gs`. Deploy the Apps Script receiver before
 the Worker when extending the product range. Existing Moringa URLs remain valid.
+
+## Search and performance
+
+The build prerenders the React pages into complete HTML with unique metadata,
+canonical URLs, social previews and Organization / WebSite / BreadcrumbList /
+Product structured data. Prices, reviews and availability are not fabricated.
+`scripts/prepare-preview.mjs` generates `dist/sitemap.xml`, `robots.txt`, cache
+headers and a real 404 page. Cloudflare drops trailing slashes to match canonicals.
+`public/llms.txt` describes the verified catalogue range; `/llm.txt` redirects to it.
+
+Run `npm run build` followed by `npm run check:seo`. Browser checks in
+`scripts/check-seo-browser.js` cover hydration, query-selected enquiries, themes
+and mobile bottom navigation without sending an enquiry. Use a fresh production
+build before prerendering; this is a build step, not a live server. Search Console
+submission and indexing are separate from Lighthouse technical SEO scores.

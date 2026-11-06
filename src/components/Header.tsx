@@ -2,6 +2,7 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import BrandLogo from "./BrandLogo";
 import { Icon } from "./PageElements";
 import { ThemeToggle } from "./ThemeProvider";
+import NavSculpture from "./NavSculpture";
 
 const links = [
   ["/", "Home"],
@@ -13,6 +14,7 @@ const links = [
 export default function Header() {
   const { pathname } = useLocation();
   return (
+    <>
     <header className={`site-header${pathname === "/" ? " cinematic-header" : ""}`}>
       <a className="skip-link" href="#main-content">
         Skip to content
@@ -26,7 +28,7 @@ export default function Header() {
         </div>
       </div>
       <div className="section-container header-row">
-        <Link to="/" aria-label="AltivonGlobal home" className="brand-home">
+        <Link to="/" aria-label="AltivonGlobal home — Elevate · Evolve · Export" className="brand-home">
           <BrandLogo />
         </Link>
         <nav className="catalogue-nav" aria-label="Main navigation">
@@ -44,5 +46,9 @@ export default function Header() {
         </div>
       </div>
     </header>
+    <nav className="mobile-bottom-nav" aria-label="Mobile navigation">
+      {links.map(([to, label]) => <NavLink key={to} to={to} end={to === "/"}><NavSculpture name={label.toLowerCase()} /><span>{label}</span></NavLink>)}
+    </nav>
+    </>
   );
 }

@@ -15,30 +15,29 @@ const MotionContext = createContext({
 export const useSiteMotion = () => useContext(MotionContext);
 
 export function MotionSystem({ children }: { children: ReactNode }) {
-  const [requested] = useState(() => {
+  const [requested, setRequested] = useState(false);
+  const [quality, setQuality] = useState<"full" | "light">("full");
+  const [reduced, setReduced] = useState(false);
+  const { pathname } = useLocation();
+  const enabled = requested && !reduced;
+  useEffect(() => {
     const connection = (
       navigator as Navigator & {
         connection?: { saveData?: boolean; effectiveType?: string };
       }
     ).connection;
-    return (
+    setRequested(
       !connection?.saveData &&
       !/^(slow-2g|2g)$/.test(connection?.effectiveType || "")
     );
-  });
-  const [quality] = useState<"full" | "light">(() =>
-    window.matchMedia("(pointer: coarse), (max-width: 767px)").matches ||
-    navigator.hardwareConcurrency <= 4
-      ? "light"
-      : "full",
-  );
-  const [reduced, setReduced] = useState(
-    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-  );
-  const { pathname } = useLocation();
-  const enabled = requested && !reduced;
-  useEffect(() => {
+    setQuality(
+      window.matchMedia("(pointer: coarse), (max-width: 767px)").matches ||
+      navigator.hardwareConcurrency <= 4
+        ? "light"
+        : "full",
+    );
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduced(preference.matches);
     const change = () => setReduced(preference.matches);
     preference.addEventListener("change", change);
     return () => preference.removeEventListener("change", change);

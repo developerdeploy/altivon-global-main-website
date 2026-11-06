@@ -13,16 +13,15 @@ const ThemeContext = createContext({
   toggle: () => {},
 });
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(() => {
-    const current = document.documentElement.dataset.theme;
-    if (current === "light" || current === "dark") return current;
-    try {
-      return localStorage.getItem("altivon-theme") === "dark" ? "dark" : "light";
-    } catch {
-      return "light";
-    }
-  });
+  const [theme, setTheme] = useState<Theme>("light");
+  const [ready, setReady] = useState(false);
   useEffect(() => {
+    const current = document.documentElement.dataset.theme;
+    setTheme(current === "dark" ? "dark" : "light");
+    setReady(true);
+  }, []);
+  useEffect(() => {
+    if (!ready) return;
     document.documentElement.dataset.theme = theme;
     document.documentElement.style.colorScheme = theme;
     document
@@ -33,7 +32,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     } catch {
       /* A blocked storage setting must not disable the theme control. */
     }
-  }, [theme]);
+  }, [theme, ready]);
   const value = useMemo(
     () => ({
       theme,

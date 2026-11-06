@@ -5,14 +5,22 @@ import { products, productEnquiry } from "@/data/products";
 
 export default function ProductDetailPage({ slug }: { slug: string }) {
   const product = products.find(item => item.slug === slug)!;
+  const origin = import.meta.env.VITE_SITE_URL || "https://altivonglobal.com";
+  const path = `/products/${product.slug}`;
   return (
     <div className="section-container page-space catalogue-detail" key={product.id}>
-      <SEO title={`${product.name} | Bulk Supply & Product Catalogue`} description={`${product.summary} Review specifications, 25 kg and 50 kg bulk packing, export terms and the AltivonGlobal product catalogue.`} canonical={`/products/${product.slug}`} />
+      <SEO title={product.seoTitle} description={`Source ${product.name} from India. 500 kg catalogue MOQ, 25 kg and 50 kg bulk packs, samples and export enquiries. Download the AltivonGlobal catalogue.`} canonical={path} image={product.image} structuredData={{
+        "@type": "Product", "@id": `${origin}${path}#product`, name: product.name,
+        description: product.description, image: `${origin}${product.image}`, url: `${origin}${path}`,
+        category: "Botanical and agricultural ingredient powders", brand: { "@type": "Brand", name: "AltivonGlobal" },
+        countryOfOrigin: { "@type": "Country", name: "India" },
+        additionalProperty: [{ "@type": "PropertyValue", name: "Catalogue minimum order", value: "500 kg" }, { "@type": "PropertyValue", name: "Bulk packaging", value: "25 kg and 50 kg; confirm per order" }],
+      }} />
       <nav className="catalogue-breadcrumb" aria-label="Breadcrumb"><Link to="/">Home</Link><span>/</span><Link to="/products">Products</Link><span>/</span><span>{product.name}</span></nav>
       <section className="catalogue-hero" data-reveal>
         <figure className="catalogue-hero-photo"><img src={product.image} alt={product.imageAlt} width="461" height="461" fetchPriority="high" /><figcaption>Product imagery from the AltivonGlobal catalogue. Appearance varies by batch.</figcaption></figure>
         <div className="catalogue-hero-copy">
-          <p className="eyebrow">INDIAN ORIGIN / BULK INGREDIENTS</p>
+          <p className="eyebrow">BULK SUPPLY & EXPORT FROM INDIA</p>
           <h1>{product.name}.</h1>
           <p className="catalogue-lead">{product.subtitle}</p>
           <p>{product.description}</p>

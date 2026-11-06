@@ -10,7 +10,9 @@ export default function BrandLogo() {
     >
       <img
         className="brand-emblem"
-        src={`${brandPath}emblem-transparent.webp`}
+        src={`${brandPath}emblem-small.webp`}
+        srcSet={`${brandPath}emblem-small.webp 96w, ${brandPath}emblem-medium.webp 160w`}
+        sizes="(max-width: 767px) 43px, 62px"
         width="480"
         height="446"
         alt=""
@@ -19,7 +21,9 @@ export default function BrandLogo() {
       <span className="brand-name">
         <img
           className="brand-wordmark"
-          src={`${brandPath}wordmark-transparent.webp`}
+          src={`${brandPath}wordmark-small.webp`}
+          srcSet={`${brandPath}wordmark-small.webp 320w, ${brandPath}wordmark-medium.webp 480w`}
+          sizes="(max-width: 767px) 160px, 200px"
           width="984"
           height="176"
           alt=""

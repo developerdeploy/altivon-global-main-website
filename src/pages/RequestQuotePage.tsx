@@ -13,6 +13,8 @@ import {
 
 export default function RequestQuotePage() {
   const [params, setParams] = useSearchParams();
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
   const requested = params.get("type");
   const type =
     requested === "sample" || requested === "docs" ? requested : "quotation";
@@ -117,6 +119,7 @@ export default function RequestQuotePage() {
         path="/request-quote"
       />
       <div className="enquiry-layout">
+        {!ready ? <p role="status">Loading enquiry form…</p> : (
         <form className="enquiry-form guided-form" onSubmit={submit}>
           <ol className="form-progress" aria-label="Enquiry progress">
             {["Requirements", "Your details", "Review"].map((name, i) => (
@@ -408,6 +411,7 @@ export default function RequestQuotePage() {
             </p>
           )}
         </form>
+        )}
       </div>
       <div className="enquiry-direct-contact">
         <span>Prefer a direct conversation?</span>

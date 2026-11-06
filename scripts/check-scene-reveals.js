@@ -52,7 +52,7 @@ async (page) => {
   const centered = await page.locator('#products .scene-backdrop').boundingBox();
   check(Math.abs(centered.x) < 2 && Math.abs(centered.width - 390) < 2, 'Reduced motion keeps photo backgrounds centered');
   await page.emulateMedia({ reducedMotion: 'no-preference' });
-  await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Quality', exact: true }).click();
+  await page.getByRole('navigation', { name: 'Mobile navigation' }).getByRole('link', { name: 'Quality', exact: true }).click();
   await page.locator('.page-intro[data-reveal][data-visible=true]').waitFor();
   await reveal(page.locator('.page-intro'));
   check(await visible(page.locator('.page-intro')), 'Lazy page content reveals after navigation from the homepage');

@@ -9,7 +9,7 @@ export default function ProductsPage() {
       <nav className="catalogue-breadcrumb" aria-label="Breadcrumb"><Link to="/">Home</Link><span>/</span><span>Products</span></nav>
       <header className="catalogue-intro" data-reveal>
         <p className="eyebrow">THE ALTIVONGLOBAL COLLECTION</p>
-        <h1>Three ingredients.<br />New possibilities.</h1>
+        <h1>Botanical powders.<br />From India.</h1>
         <p>Indian-origin botanical and agricultural powders for business buyers. Choose an ingredient to explore its applications, specifications, packing and catalogue.</p>
       </header>
       <ProductCollection />

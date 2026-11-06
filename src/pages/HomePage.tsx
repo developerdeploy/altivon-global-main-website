@@ -12,8 +12,8 @@ export default function HomePage() {
   return (
     <div className="cinematic-home">
       <SEO
-        title="AltivonGlobal | Moringa, Beetroot & Ashwagandha Powders"
-        description="Source moringa, beetroot and ashwagandha powders from India. Explore our product range and discuss bulk packing, samples and export requirements."
+        title="Botanical Powder Exporter in India | AltivonGlobal"
+        description="Source moringa leaf powder, beetroot powder and ashwagandha powder from India. Bulk supply, 25 kg and 50 kg packs, samples and export enquiries."
         canonical="/"
       />
       <ExportJourney />

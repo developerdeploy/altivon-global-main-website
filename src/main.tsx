@@ -7,7 +7,6 @@ import { ThemeProvider } from "./components/ThemeProvider";
 import "./local-fonts.css";
 import "./index.css";
 import "./motion-design.css";
-import "./product-design.css";
 import "./altivon-palette.css";
 import "./themes.css";
 import "./scene-backgrounds.css";

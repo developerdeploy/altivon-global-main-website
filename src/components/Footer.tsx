@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="section-container">
         <div className="footer-grid">
           <div>
-            <Link to="/" aria-label="AltivonGlobal home">
+            <Link to="/" aria-label="AltivonGlobal home — Elevate · Evolve · Export">
               <BrandLogo />
             </Link>
             <p className="footer-description">

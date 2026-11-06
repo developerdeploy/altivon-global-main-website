@@ -6,6 +6,7 @@ interface SEOProps {
   description: string;
   canonical?: string;
   noindex?: boolean;
+  image?: string;
   structuredData?: Record<string, any>;
 }
 
@@ -15,8 +16,9 @@ export default function SEO({
   title,
   description,
   canonical,
-  noindex = import.meta.env.VITE_CLIENT_PREVIEW === "true",
+  noindex = import.meta.env.VITE_CLIENT_PREVIEW === "true" || ["/enquiry-received", "/404"].includes(canonical || ""),
   structuredData,
+  image = "/images/catalogue-moringa-powder.webp",
 }: SEOProps) {
   const fullTitle = /altivonglobal/i.test(title)
     ? title
@@ -29,8 +31,8 @@ export default function SEO({
     : undefined;
 
   const defaultOrganizationSchema = {
-    "@context": "https://schema.org",
     "@type": "Organization",
+    "@id": `${SITE_URL}/#organization`,
     name: COMPANY.brandName,
     url: SITE_URL,
     logo: `${SITE_URL}/brand/altivonglobal-transparent.png`,
@@ -57,6 +59,20 @@ export default function SEO({
     ],
   };
 
+  const socialImage = image.startsWith("http") ? image : `${SITE_URL}${image}`;
+  const crumbs = canonical?.startsWith("/products/")
+    ? [{ name: "Home", item: `${SITE_URL}/` }, { name: "Products", item: `${SITE_URL}/products` }, { name: title.split(" Supplier")[0].split(" Exporter")[0], item: canonicalUrl }]
+    : [{ name: "Home", item: `${SITE_URL}/` }, ...(canonical && canonical !== "/" ? [{ name: title, item: canonicalUrl }] : [])];
+  const graph = {
+    "@context": "https://schema.org",
+    "@graph": [
+      defaultOrganizationSchema,
+      { "@type": "WebSite", "@id": `${SITE_URL}/#website`, url: `${SITE_URL}/`, name: COMPANY.brandName, publisher: { "@id": `${SITE_URL}/#organization` } },
+      { "@type": canonical === "/products" ? "CollectionPage" : "WebPage", "@id": `${canonicalUrl}#webpage`, url: canonicalUrl, name: fullTitle, description, isPartOf: { "@id": `${SITE_URL}/#website` }, ...(structuredData ? { mainEntity: { "@id": structuredData["@id"] } } : {}) },
+      ...(crumbs.length > 1 ? [{ "@type": "BreadcrumbList", itemListElement: crumbs.map((crumb, index) => ({ "@type": "ListItem", position: index + 1, ...crumb })) }] : []),
+      ...(structuredData ? [structuredData] : []),
+    ],
+  };
   return (
     <Helmet>
       <title>{fullTitle}</title>
@@ -78,9 +94,13 @@ export default function SEO({
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
+      <meta property="og:image" content={socialImage} />
+      <meta property="og:image:alt" content={title} />
+      <meta name="twitter:image" content={socialImage} />
+      <link rel="describedby" href={`${SITE_URL}/llms.txt`} type="text/plain" />
 
       <script type="application/ld+json">
-        {JSON.stringify(structuredData || defaultOrganizationSchema)}
+        {JSON.stringify(graph).replace(/</g, "\\u003c")}
       </script>
     </Helmet>
   );
