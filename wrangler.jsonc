@@ -8,6 +8,6 @@
     "not_found_handling": "single-page-application"
   },
   "routes": [
-    { "pattern": "altivonglobal.com", "custom_domain": true }
+    { "pattern": "altivonglobal.com/*", "zone_name": "altivonglobal.com" }
   ]
 }

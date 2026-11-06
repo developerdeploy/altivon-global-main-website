@@ -13,8 +13,9 @@ build command is required. Use Node.js 22.12 or newer.
 For a local deployment, authenticate with `npx wrangler login`, then run
 `npx wrangler deploy`.
 
-The custom-domain route is declared in `wrangler.jsonc`. Cloudflare must manage
-the active DNS zone for `altivonglobal.com` to attach the domain and certificate.
+The hostname route is declared in `wrangler.jsonc`. Cloudflare must manage
+the active DNS zone for `altivonglobal.com`, with a proxied root DNS record.
+The route sends all root-domain requests to the Worker's static assets.
 
 ## Current scope
 
