@@ -19,8 +19,6 @@ for (const url of urls) {
   assert.match(html, /<meta[^>]+name="description"[^>]+content="[^"]{50,}"/);
   assert.doesNotMatch(html, /content="noindex/);
   assert.match(html, /<main[^>]*>[\s\S]+<h1/);
-  assert.match(html, /<style data-critical>/);
-  assert.doesNotMatch(html, /<link[^>]+rel="stylesheet"/);
   const json = html.match(/<script[^>]+type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/)?.[1];
   const graph = JSON.parse(json)["@graph"];
   assert.ok(graph.some(item => item["@type"] === "Organization"));

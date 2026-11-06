@@ -47,8 +47,6 @@ the Worker when extending the product range. Existing Moringa URLs remain valid.
 The build prerenders the React pages into complete HTML with unique metadata,
 canonical URLs, social previews and Organization / WebSite / BreadcrumbList /
 Product structured data. Prices, reviews and availability are not fabricated.
-Initial styles are included in the HTML to avoid blocking mobile first paint on
-additional stylesheet requests; React hydrates the existing page content.
 `scripts/prepare-preview.mjs` generates `dist/sitemap.xml`, `robots.txt`, cache
 headers and a real 404 page. Cloudflare drops trailing slashes to match canonicals.
 `public/llms.txt` describes the verified catalogue range; `/llm.txt` redirects to it.
