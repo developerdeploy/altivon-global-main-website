@@ -11,6 +11,9 @@ async (page) => {
     await page.goto(`${base}/`);
     await page.locator('.motion-on').waitFor();
     await page.evaluate(() => document.fonts.ready);
+    await page.waitForFunction(() => document.querySelector('#export-journey')?.dataset.painted === 'true');
+    const initialFrames = await page.evaluate(() => performance.getEntriesByType('resource').filter(entry => entry.name.includes('/frames/export-journey/')).length);
+    check(initialFrames <= 2, `${width}px: opening scene avoids prefetching the animation before scrolling (${initialFrames} frames)`);
     const nav = page.getByRole('navigation',{name:'Mobile navigation'});
     await nav.waitFor({state:'visible'});
     const bounds = await nav.boundingBox();

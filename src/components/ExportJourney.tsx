@@ -86,7 +86,7 @@ export default function ExportJourney() {
       if (disposed) return;
       const lead = Math.min(12, Math.max(1, Math.round(speed * 140)));
       const candidates = [wanted];
-      if (enabled) {
+      if (enabled && wanted > 0) {
         candidates.push(wanted + direction * lead);
         for (let distance = 1; distance <= 8; distance++) candidates.push(wanted + direction * distance);
         for (let distance = 1; distance <= 2; distance++) candidates.push(wanted - direction * distance);
