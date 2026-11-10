@@ -37,6 +37,24 @@ async (page) => {
     }
     check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${width}px: no horizontal overflow`);
   }
+  const productsSection = page.locator('#products');
+  const quoteSection = page.locator('#quotation-brief');
+  for (const section of await page.locator('.cinematic-home > .image-surface').all()) {
+    await section.scrollIntoViewIfNeeded();
+    await page.waitForFunction(element => element.getAttribute('data-visible') === 'true', await section.elementHandle());
+    const backdrop = section.locator('.scene-backdrop img');
+    await backdrop.evaluate(image => image.decode());
+    check(await backdrop.evaluate(image => image.naturalWidth > 0), 'Deferred section keeps its background image when revealed');
+  }
+  for (let pass = 0; pass < 2; pass++) {
+    await productsSection.scrollIntoViewIfNeeded();
+    await page.waitForFunction(() => document.querySelector('#products').dataset.visible === 'true');
+    await quoteSection.scrollIntoViewIfNeeded();
+    await page.waitForFunction(() => document.querySelector('#products').dataset.visible === 'false');
+    await productsSection.scrollIntoViewIfNeeded();
+    await page.waitForFunction(() => document.querySelector('#products').dataset.visible === 'true');
+    check(true, `Deferred sections reveal again when scrolling back, pass ${pass+1}`);
+  }
   await page.setViewportSize({width:390,height:844});
   for (const product of ['moringa-leaf-powder','beetroot-powder','ashwagandha-powder']) {
     await page.goto(`${base}/products/${product}`);

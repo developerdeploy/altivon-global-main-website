@@ -57,6 +57,7 @@
   .cinema-copy { right: 43%; }
 }
 @media (max-width: 800px) {
+  .cinematic-home > .image-surface { content-visibility: auto; contain-intrinsic-size: auto 900px; }
   .export-journey { --cinema-header: 80px; }
   .export-journey { height: 800svh; }
   .journey-film { left: 0; transform-origin: center; }
